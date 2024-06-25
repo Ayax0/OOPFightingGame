@@ -18,6 +18,8 @@ public class GameResource extends JLabel {
 	}
 	
 	private void drawTexture() {
+		if(this.texture == null) return;
+		
 		ImageIcon icon = new ImageIcon(texture.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_DEFAULT));
 		this.setIcon(icon);
 	}

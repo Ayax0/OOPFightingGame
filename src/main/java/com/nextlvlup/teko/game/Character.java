@@ -3,62 +3,71 @@ package com.nextlvlup.teko.game;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import com.nextlvlup.teko.framework.DynamicGameResource;
-import com.nextlvlup.teko.framework.GameInstance;
+import javax.vecmath.Vector2d;
 
-public class Character extends DynamicGameResource {
+import com.nextlvlup.base.Player;
+import com.nextlvlup.packet.PlayerMovePacket;
+import com.nextlvlup.teko.framework.GameInstance;
+import com.nextlvlup.teko.framework.PhysicGameResource;
+
+import lombok.Getter;
+
+public class Character extends PhysicGameResource {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2677108534728790704L;
-	int xVec = 0;
-	int yVec = 0;
+	private GameInstance instance;
+	
+	@Getter private Player player = new Player("SomePlayer");
 	
 	public Character(GameInstance instance) {
-		this.setTexture("test.png");
-		this.setSize(100, 100);
+		super(instance);
+		
+		this.instance = instance;
+		this.setTexture("char/basic.png");
+		this.setSize(60, 80);
 		
 		instance.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyChar() == 'w') {
-					yVec = -1;
+					vector.setY(-5);
 				}
 				if(e.getKeyChar() == 's') {
-					yVec = 1;
+					vector.setY(5);
 				}
 				if(e.getKeyChar() == 'a') {
-					xVec = -1;
+					vector.setX(-5);
 				}
 				if(e.getKeyChar() == 'd') {
-					xVec = 1;
+					vector.setX(5);
 				}
 				super.keyPressed(e);
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(e.getKeyChar() == 'w') {
-					yVec = 0;
+				if(e.getKeyChar() == 'w' || e.getKeyChar() == 's') {
+					vector.setY(0);
 				}
-				if(e.getKeyChar() == 's') {
-					yVec = 0;
-				}
-				if(e.getKeyChar() == 'a') {
-					xVec = 0;
-				}
-				if(e.getKeyChar() == 'd') {
-					xVec = 0;
+				if(e.getKeyChar() == 'a' || e.getKeyChar() == 'd') {
+					vector.setX(0);
 				}
 				super.keyReleased(e);
 			}
 		});
 	}
-
+	
 	@Override
 	public void update() {
-		this.setLocation(this.getX() + xVec * 5, this.getY() + yVec * 5);
+		super.update();
+		
+		Vector2d location = new Vector2d();
+		location.setX(this.getX());
+		location.setY(this.getY());
+		instance.getClient().sendPacket(new PlayerMovePacket(player, location));
 	}
 
 }
