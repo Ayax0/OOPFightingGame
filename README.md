@@ -9,3 +9,6 @@ Ein von Super Smash Bros inspiriertes Fighting Game in der Seitenansicht. Es sol
 
 ## Server Konzept
 Es gibt einen Zentralen Server welcher Serialisierte Packete von allen Spielern erhält, diese verarbeitet und wenn nötig an andere Spieler weiterleitet. Dabei gibt es zum einen die Struktur der Packete welche Server wie auch Clientseitig übereinstimmen und somit per Netzwerk versendet werden können. Zusätzlich gibt es die PacketListener welche entweder beim Server oder beim Client registriert werden können und einzelne Packete verarbeit.
+
+## Docs
+[![Javadoc](https://img.shields.io/badge/JavaDoc-Online-green)](https://Ayax0.github.io/OOPFightingGame/javadoc/)
