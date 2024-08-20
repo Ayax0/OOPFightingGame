@@ -1,6 +1,9 @@
-com.nextlvlup.base
-com.nextlvlup.packet
-com.nextlvlup.teko
-com.nextlvlup.teko.framework
-com.nextlvlup.teko.game
-com.nextlvlup.teko.network
+com.nextlvlup.client
+com.nextlvlup.client.framework
+com.nextlvlup.client.game
+com.nextlvlup.client.network
+com.nextlvlup.network
+com.nextlvlup.network.base
+com.nextlvlup.network.packet
+com.nextlvlup.server
+com.nextlvlup.server.network
