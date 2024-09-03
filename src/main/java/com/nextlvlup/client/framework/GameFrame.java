@@ -1,59 +1,48 @@
 package com.nextlvlup.client.framework;
 
 import java.awt.Component;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 
 import com.nextlvlup.client.network.UDPClient;
-import com.nextlvlup.network.base.Player;
-import com.nextlvlup.network.packet.PlayerJoinPacket;
-
 import lombok.Getter;
 
-public class GameInstance extends JFrame {
+public class GameFrame extends JFrame {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2431403290509854638L;
-	private int framerate;
 	private JLayeredPane rootPane = new JLayeredPane();
 	
 	@Getter private UDPClient client;
 	
 	private ArrayList<StaticGameResource> staticResources = new ArrayList<StaticGameResource>();
+	private ArrayList<DynamicGameResource> dynamicResources = new ArrayList<DynamicGameResource>();
 	
-	public GameInstance(int framerate) {
-		this.framerate = framerate;
-		
+	public GameFrame() {
 		this.setBounds(0, 0, 800, 600);
 		this.setContentPane(rootPane);
 		rootPane.setLayout(null);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-		
-		try {
-			client = new UDPClient();
-			client.start();
-			
-			// new PlayerJoinListener(client);
-			
-			client.sendPacket(new PlayerJoinPacket(new Player("SomePlayer")));
-		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	public void attachGameLoop(GameLoop gameloop) {
-		new Timer().scheduleAtFixedRate(gameloop, 0L, 1000L / this.framerate);
+	public void start() {
+		new Timer().scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				for(DynamicGameResource resource : dynamicResources) {
+					resource.update(staticResources);
+				}
+			}
+		}, 0L, 1000L / 30);
 	}
 	
 	public ArrayList<StaticGameResource> getStaticResources() {
@@ -62,10 +51,11 @@ public class GameInstance extends JFrame {
 	
 	@Override
 	public Component add(Component comp) {
-		System.out.println(comp instanceof StaticGameResource);
-		
 		if(comp instanceof StaticGameResource) 
 			staticResources.add((StaticGameResource) comp);
+		
+		if(comp instanceof DynamicGameResource)
+			dynamicResources.add((DynamicGameResource) comp);
 		
 		return super.add(comp);
 	}
@@ -75,6 +65,9 @@ public class GameInstance extends JFrame {
 		if(comp instanceof StaticGameResource) 
 			staticResources.add((StaticGameResource) comp);
 		
+		if(comp instanceof DynamicGameResource)
+			dynamicResources.add((DynamicGameResource) comp);
+		
 		return super.add(comp, index);
 	}
 	
@@ -83,6 +76,9 @@ public class GameInstance extends JFrame {
 		if(comp instanceof StaticGameResource) 
 			staticResources.add((StaticGameResource) comp);
 		
+		if(comp instanceof DynamicGameResource)
+			dynamicResources.add((DynamicGameResource) comp);
+		
 		super.add(comp, constraints);
 	}
 	
@@ -90,6 +86,9 @@ public class GameInstance extends JFrame {
 	public void add(Component comp, Object constraints, int index) {
 		if(comp instanceof StaticGameResource) 
 			staticResources.add((StaticGameResource) comp);
+		
+		if(comp instanceof DynamicGameResource)
+			dynamicResources.add((DynamicGameResource) comp);
 		
 		super.add(comp, constraints, index);
 	}

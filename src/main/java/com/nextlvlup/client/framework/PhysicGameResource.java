@@ -1,6 +1,15 @@
 package com.nextlvlup.client.framework;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.vecmath.Vector2d;
+
+import math.geom2d.Box2D;
+import math.geom2d.Point2D;
+import math.geom2d.Vector2D;
+import math.geom2d.line.Line2D;
+import math.geom2d.line.LinearShape2D;
 
 public class PhysicGameResource extends DynamicGameResource {
 
@@ -8,20 +17,55 @@ public class PhysicGameResource extends DynamicGameResource {
 	 * 
 	 */
 	private static final long serialVersionUID = -7387826990264843880L;
-	
-	private GameInstance instance;
 	public Vector2d vector = new Vector2d();
-	
-	public PhysicGameResource(GameInstance instance) {
-		this.instance = instance;
-	}
 
 	@Override
-	public void update() {
-		Vector2d location = new Vector2d(this.getX(), this.getY());
-		location.add(vector);
+	public void update(ArrayList<StaticGameResource> staticResources) {
+		Vector2D vect = new Vector2D(vector.getX(), vector.getY());
+		Vector2D offset = new Vector2D(0, this.getHeight());
 		
-		this.setLocation((int) location.getX(), (int) location.getY());
+		Point2D src = new Point2D(this.getX(), this.getY());
+		Point2D dest = src.plus(vect);
+		
+		// System.out.println("vect: " + vect.x() + " / " + vect.y());
+		// System.out.println("src: " + src.x() + " / " + src.y());
+		// System.out.println("dest: " + dest.x() + " / " + dest.y());
+		
+		// Collision Check
+		if(vect.y() > 0) {
+			for(StaticGameResource resource : staticResources) {
+				Box2D box = new Box2D(
+					new Point2D(resource.getX(), resource.getY()), 
+					resource.getWidth(), 
+					resource.getHeight()
+				);
+				
+				
+				Line2D trajectory = new Line2D(src.plus(offset), dest.plus(offset));
+				
+				for(LinearShape2D edge : box.edges()) {
+					Collection<Point2D> intersections = trajectory.intersections(edge);
+					intersections.removeIf(p -> p.almostEquals(src, 0));
+					
+					if(intersections.size() > 0) {
+						Point2D intersection = intersections.iterator().next();
+						
+						this.setLocation(
+							(int) intersection.minus(offset).x(), 
+							(int) intersection.minus(offset).y()
+						);
+						
+						vector.setY(0);
+						return;
+					}
+				}
+			}
+		}
+		
+		this.setLocation((int) dest.x(), (int) dest.y());
+		vector.add(new Vector2d(0, 1));
 	}
+	
+	
 
 }

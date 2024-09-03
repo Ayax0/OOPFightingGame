@@ -13,6 +13,10 @@ public class GameResource extends JLabel {
 	private static final long serialVersionUID = -824068727445043912L;
 	private Image texture;
 	
+	public GameResource() {
+		this.setOpaque(true);
+	}
+	
 	public void setTexture(String path) {
 		this.texture = new ImageIcon(getClass().getResource("/com/nextlvlup/teko/assets/" + path)).getImage();
 	}

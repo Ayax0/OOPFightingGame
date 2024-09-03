@@ -5,10 +5,10 @@ import java.util.TimerTask;
 
 public abstract class GameLoop extends TimerTask {
 	
-	private GameInstance instance;
+	private GameFrame instance;
 	protected ArrayList<DynamicGameResource> resources = new ArrayList<DynamicGameResource>();
 	
-	public GameLoop(GameInstance instance) {
+	public GameLoop(GameFrame instance) {
 		this.instance = instance;
 	}
 	
