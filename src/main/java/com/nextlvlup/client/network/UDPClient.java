@@ -18,12 +18,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.nextlvlup.network.PacketListener;
+import com.nextlvlup.network.UDPSocket;
 import com.nextlvlup.network.packet.KeepAlivePacket;
 
 public class UDPClient extends Thread {
 	
 	private DatagramSocket socket;
 	private InetAddress address;
+	private byte[] buf = new byte[512];
 	
 	@SuppressWarnings("rawtypes")
 	private HashMap<Class<? extends Serializable>, ArrayList<PacketListener>> listeners = new HashMap<>();
@@ -31,13 +33,6 @@ public class UDPClient extends Thread {
 	public UDPClient() throws SocketException, UnknownHostException {
 		socket = new DatagramSocket();
 		address = InetAddress.getByName("localhost");
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void addPacketListener(Class<? extends Serializable> _class, PacketListener<? extends Serializable> listener) {
-		if(!this.listeners.containsKey(_class))
-			this.listeners.put(_class, new ArrayList<PacketListener>());
-		this.listeners.get(_class).add(listener);
 	}
 	
 	public void sendPacket(Object object) {
@@ -68,17 +63,19 @@ public class UDPClient extends Thread {
 		}, 0, 1000);
 		
 		while(true) {
-			byte[] inBuf = new byte[512];
-			
 			try {
-				DatagramPacket packet = new DatagramPacket(inBuf, inBuf.length);
+				DatagramPacket packet = new DatagramPacket(buf, buf.length);
+				
 				socket.receive(packet);
 				
-				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(inBuf));
+				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buf));
 				Object obj = in.readObject();
 				
+				UDPSocket sender = new UDPSocket(packet.getAddress().getAddress(), packet.getPort());
+				
+				if (!this.listeners.containsKey(obj.getClass())) continue;
 				for(PacketListener<Serializable> listener : this.listeners.get(obj.getClass())) {
-					listener.handler((Serializable) obj, packet.getAddress(), packet.getPort());
+					listener.handler((Serializable) obj, sender);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -86,6 +83,13 @@ public class UDPClient extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void addPacketListener(Class<? extends Serializable> _class, PacketListener<? extends Serializable> listener) {
+		if(!this.listeners.containsKey(_class))
+			this.listeners.put(_class, new ArrayList<PacketListener>());
+		this.listeners.get(_class).add(listener);
 	}
 
 }
