@@ -48,8 +48,6 @@ public class UDPServer extends Thread {
 	}
 	
 	private void sendPacket(UDPSocket receiver, Object object) {
-		System.out.println(object.getClass().getName() +  " send to " + receiver.getPort());
-		
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutput oo = new ObjectOutputStream(bos);

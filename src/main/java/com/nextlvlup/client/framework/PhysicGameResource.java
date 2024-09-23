@@ -11,7 +11,7 @@ import math.geom2d.Vector2D;
 import math.geom2d.line.Line2D;
 import math.geom2d.line.LinearShape2D;
 
-public class PhysicGameResource extends DynamicGameResource {
+public abstract class PhysicGameResource extends DynamicGameResource {
 
 	/**
 	 * 
@@ -62,10 +62,17 @@ public class PhysicGameResource extends DynamicGameResource {
 			}
 		}
 		
-		this.setLocation((int) dest.x(), (int) dest.y());
+		int destX = (int) dest.x();
+		int destY = (int) dest.y();
+		
+		if(destX != this.getX() || destY != this.getY()) {
+			this.move();
+		}
+		
+		this.setLocation(destX, destY);
 		vector.add(new Vector2d(0, 1));
 	}
 	
-	
+	public abstract void move();
 
 }

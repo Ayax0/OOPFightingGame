@@ -19,7 +19,6 @@ public class UDPSocket implements Serializable {
 	public UDPSocket(byte[] addr, int port) {
 		this.addr = addr;
 		this.port = port;
-		
 	}
 	
 	@Override

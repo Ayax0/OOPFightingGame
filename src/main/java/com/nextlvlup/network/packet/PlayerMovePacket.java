@@ -16,11 +16,13 @@ public class PlayerMovePacket implements Serializable {
 	private static final long serialVersionUID = 8525002348203863511L;
 	
 	@Getter Player player;
-	@Getter Vector2d location;
+	@Getter int x;
+	@Getter int y;
 	
-	public PlayerMovePacket(Player player, Vector2d location) {
+	public PlayerMovePacket(Player player, int x, int y) {
 		this.player = player;
-		this.location = location;
+		this.x = x;
+		this.y = y;
 	}
 
 }

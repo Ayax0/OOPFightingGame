@@ -15,6 +15,7 @@ import com.nextlvlup.network.PacketListener;
 import com.nextlvlup.network.UDPSocket;
 import com.nextlvlup.network.base.Player;
 import com.nextlvlup.network.packet.PlayerJoinPacket;
+import com.nextlvlup.network.packet.PlayerMovePacket;
 import com.nextlvlup.network.packet.TimeoutPacket;
 
 public class Main {
@@ -29,11 +30,23 @@ public class Main {
 			GameFrame frame = new GameFrame();
 			frame.start();
 			
-			PhysicGameResource test = new PhysicGameResource();
-			test.setTexture("char/basic.png");
-			test.setLocation(10, 10);
-			test.setSize(60, 80);
-			frame.add(test);
+			Player player = new Player("test");
+			
+			PhysicGameResource character = new PhysicGameResource() {
+
+				private static final long serialVersionUID = -440256921387586272L;
+
+				@Override
+				public void move() {
+					client.sendPacket(new PlayerMovePacket(player, this.getX(), this.getY()));
+				}
+				
+			};
+			
+			character.setTexture("char/basic.png");
+			character.setLocation(10, 10);
+			character.setSize(60, 80);
+			frame.add(character);
 			
 			frame.addKeyListener(new KeyAdapter() {
 				@Override
@@ -42,15 +55,15 @@ public class Main {
 					
 					// Space Key
 					if(e.getKeyCode() == 32)
-						test.vector.setY(-10);
+						character.vector.setY(-10);
 					
 					// A Key
 					if(e.getKeyCode() == 65)
-						test.vector.setX(-5);
+						character.vector.setX(-5);
 						
 					// D Key
 					if(e.getKeyCode() == 68)
-						test.vector.setX(5);
+						character.vector.setX(5);
 				}
 				
 				@Override
@@ -58,12 +71,12 @@ public class Main {
 					super.keyReleased(e);
 					
 					// A Key
-					if(e.getKeyCode() == 65 && test.vector.getX() < 0 )
-						test.vector.setX(0);
+					if(e.getKeyCode() == 65 && character.vector.getX() < 0 )
+						character.vector.setX(0);
 						
 					// D Key
-					if(e.getKeyCode() == 68 && test.vector.getX() > 0)
-						test.vector.setX(0);
+					if(e.getKeyCode() == 68 && character.vector.getX() > 0)
+						character.vector.setX(0);
 				}
 			});
 			
@@ -75,7 +88,7 @@ public class Main {
 			test2.setText("test");
 			frame.add(test2);
 			
-			client.sendPacket(new PlayerJoinPacket(new Player("test")));
+			client.sendPacket(new PlayerJoinPacket(player));
 			
 			client.addPacketListener(PlayerJoinPacket.class, new PacketListener<PlayerJoinPacket>() {
 				
@@ -105,6 +118,21 @@ public class Main {
 						players.remove(socket);
 					} else {
 						System.err.println("unidentified player timeout!");
+					}
+				}
+				
+			});
+			
+			client.addPacketListener(PlayerMovePacket.class, new PacketListener<PlayerMovePacket>() {
+
+				@Override
+				public void handler(PlayerMovePacket obj, UDPSocket socket) {
+					if(players.containsKey(socket)) {
+						BasePlayer player = players.get(socket);
+						System.out.println("update player");
+						player.setX(obj.getX());
+						player.setY(obj.getY());
+						frame.repaint();
 					}
 				}
 				
