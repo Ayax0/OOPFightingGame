@@ -14,6 +14,8 @@ import com.nextlvlup.client.network.UDPClient;
 import com.nextlvlup.network.PacketListener;
 import com.nextlvlup.network.UDPSocket;
 import com.nextlvlup.network.base.Player;
+import com.nextlvlup.network.packet.IdentificationRequestPacket;
+import com.nextlvlup.network.packet.IdentificationResponsePacket;
 import com.nextlvlup.network.packet.PlayerJoinPacket;
 import com.nextlvlup.network.packet.PlayerMovePacket;
 import com.nextlvlup.network.packet.TimeoutPacket;
@@ -94,6 +96,8 @@ public class Main {
 				
 				@Override
 				public void handler(PlayerJoinPacket obj, UDPSocket socket) {
+					if(players.containsKey(socket)) return;
+					
 					System.out.println("player join on client");
 					
 					BasePlayer player = new BasePlayer(obj.getPlayer());
@@ -134,6 +138,15 @@ public class Main {
 						player.setY(obj.getY());
 						frame.repaint();
 					}
+				}
+				
+			});
+			
+			client.addPacketListener(IdentificationRequestPacket.class, new PacketListener<IdentificationRequestPacket>() {
+
+				@Override
+				public void handler(IdentificationRequestPacket obj, UDPSocket socket) {
+					client.sendPacket(new IdentificationResponsePacket(obj.getUUID(), player));
 				}
 				
 			});

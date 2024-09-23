@@ -28,6 +28,7 @@ public class UDPServer extends Thread {
 	
 	@SuppressWarnings("rawtypes")
 	private HashMap<Class<? extends Serializable>, ArrayList<PacketListener>> listeners = new HashMap<>();
+	
 	public HashMap<UDPSocket, Long> sockets = new HashMap<>();
 	
 	public UDPServer(int port) throws SocketException {
@@ -47,7 +48,7 @@ public class UDPServer extends Thread {
 		}
 	}
 	
-	private void sendPacket(UDPSocket receiver, Object object) {
+	public void sendPacket(UDPSocket receiver, Object object) {
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutput oo = new ObjectOutputStream(bos);

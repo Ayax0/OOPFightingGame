@@ -65,9 +65,8 @@ public abstract class PhysicGameResource extends DynamicGameResource {
 		int destX = (int) dest.x();
 		int destY = (int) dest.y();
 		
-		if(destX != this.getX() || destY != this.getY()) {
+		// if(destX != this.getX() || destY != this.getY())
 			this.move();
-		}
 		
 		this.setLocation(destX, destY);
 		vector.add(new Vector2d(0, 1));

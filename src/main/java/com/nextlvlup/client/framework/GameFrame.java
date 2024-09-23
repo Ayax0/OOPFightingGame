@@ -24,6 +24,8 @@ public class GameFrame extends JFrame {
 	private ArrayList<StaticGameResource> staticResources = new ArrayList<StaticGameResource>();
 	private ArrayList<DynamicGameResource> dynamicResources = new ArrayList<DynamicGameResource>();
 	
+	private ArrayList<DynamicGameResource> dynamicResourceStash = new ArrayList<DynamicGameResource>();
+	
 	public GameFrame() {
 		this.setBounds(0, 0, 800, 600);
 		this.setContentPane(rootPane);
@@ -41,6 +43,11 @@ public class GameFrame extends JFrame {
 				for(DynamicGameResource resource : dynamicResources) {
 					resource.update(staticResources);
 				}
+				
+				if(dynamicResourceStash.size() > 0) {
+					dynamicResources.addAll(dynamicResourceStash);
+					dynamicResourceStash.clear();
+				}
 			}
 		}, 0L, 1000L / 30);
 	}
@@ -55,7 +62,7 @@ public class GameFrame extends JFrame {
 			staticResources.add((StaticGameResource) comp);
 		
 		if(comp instanceof DynamicGameResource)
-			dynamicResources.add((DynamicGameResource) comp);
+			dynamicResourceStash.add((DynamicGameResource) comp);
 		
 		return super.add(comp);
 	}
@@ -66,7 +73,7 @@ public class GameFrame extends JFrame {
 			staticResources.add((StaticGameResource) comp);
 		
 		if(comp instanceof DynamicGameResource)
-			dynamicResources.add((DynamicGameResource) comp);
+			dynamicResourceStash.add((DynamicGameResource) comp);
 		
 		return super.add(comp, index);
 	}
@@ -77,7 +84,7 @@ public class GameFrame extends JFrame {
 			staticResources.add((StaticGameResource) comp);
 		
 		if(comp instanceof DynamicGameResource)
-			dynamicResources.add((DynamicGameResource) comp);
+			dynamicResourceStash.add((DynamicGameResource) comp);
 		
 		super.add(comp, constraints);
 	}
@@ -88,7 +95,7 @@ public class GameFrame extends JFrame {
 			staticResources.add((StaticGameResource) comp);
 		
 		if(comp instanceof DynamicGameResource)
-			dynamicResources.add((DynamicGameResource) comp);
+			dynamicResourceStash.add((DynamicGameResource) comp);
 		
 		super.add(comp, constraints, index);
 	}
