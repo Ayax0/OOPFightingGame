@@ -26,14 +26,16 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
+			// UDP Init
 			UDPClient client = new UDPClient();
 			client.start();
 			
+			// Game Init
 			GameFrame frame = new GameFrame();
 			frame.start();
 			
+			// Player Init
 			Player player = new Player("test");
-			
 			PhysicGameResource character = new PhysicGameResource() {
 
 				private static final long serialVersionUID = -440256921387586272L;
@@ -81,14 +83,6 @@ public class Main {
 						character.vector.setX(0);
 				}
 			});
-			
-			StaticGameResource test2 = new StaticGameResource();
-			test2.setLocation(10, 300);
-			test2.setSize(300, 10);
-			test2.setBackground(Color.GREEN);
-			test2.setForeground(Color.RED);
-			test2.setText("test");
-			frame.add(test2);
 			
 			client.sendPacket(new PlayerJoinPacket(player));
 			
@@ -150,6 +144,15 @@ public class Main {
 				}
 				
 			});
+			
+			// Static Assets
+			StaticGameResource test2 = new StaticGameResource();
+			test2.setLocation(10, 300);
+			test2.setSize(300, 10);
+			test2.setBackground(Color.GREEN);
+			test2.setForeground(Color.RED);
+			test2.setText("test");
+			frame.add(test2);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
